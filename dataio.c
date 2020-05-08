@@ -35,13 +35,21 @@ MFormat readSignature(FILE* filePtr){
         exit(1);
     }
 
+    if(strcmp("coordinate", formatStr) == 0){
+        ret.format = COORDINATE;
+    } else if(strcmp("array", formatStr) == 0){
+        ret.format = ARRAY;
+    } else {
+        THROW("readSignature: invalid data structure!", 2);
+    }
+
     if (strcmp("real", valueTypeStr) == 0){
         ret.valueType = REAL;
     } else if (strcmp("integer", valueTypeStr) == 0){
         ret.valueType = INTEGER;
     } else if (strcmp("complex", valueTypeStr) == 0){
         ret.valueType = COMPLEX;
-    } else if (strcmp("patter", valueTypeStr) == 0){
+    } else if (strcmp("pattern", valueTypeStr) == 0){
         ret.valueType = PATTERN;
     } else {
         THROW("readSignature: invalid value type!", 3);
@@ -93,6 +101,7 @@ MData* readData(const char* filename){
     MData* data = initMData(num_rows, num_cols, num_lines, format);
 
     for(int i = 0; i < num_lines; i++) {
+//        printf("reading line %d\n", i);
         int success = -1;
         if (format.format == ARRAY) {
             data->from[i] = i / num_cols;
