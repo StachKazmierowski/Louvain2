@@ -24,7 +24,7 @@ typedef  struct{
 
 void sortEdges(Graph* g);
 
-void compareEdges(const void* a, const void* b);
+int compareEdges(const void* a, const void* b);
 
 Graph* initGraph(MData* data);
 

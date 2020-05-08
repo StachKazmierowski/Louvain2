@@ -40,9 +40,32 @@ Graph* initGraph(MData* data){
     }
 //    printf("%d edges added\n", counter);
 
-//    sortEdges(g);
+    sortEdges(g);
 
     return g;
+}
+
+void sortEdges(Graph* g){
+    qsort(g->edges, g->numEdges, sizeof(Edge), compareEdges);
+    int currEdge = 0;
+    int currVertice = 0;
+    while(currEdge < g->numEdges && currVertice < g->size){
+        Edge edge = g->edges[currEdge];
+        if(edge.weight == 0){
+            g->verticeLastEdgeExclusive[currVertice] = currEdge;
+            currVertice++;
+            currEdge++;
+        } else if (edge.from > currVertice){
+            while(edge.from > currVertice){
+                g->verticeLastEdgeExclusive[currVertice] = currEdge;
+                currVertice++;
+            }
+        }
+        currEdge++;
+    }
+    if(currEdge >= g->numEdges){
+        g->verticeLastEdgeExclusive[currVertice] = currEdge;
+    }
 }
 
 void addEdge(Graph* g, int index, int from, int to, float weight){
@@ -60,6 +83,33 @@ float hasEdge(Graph* g, int from, int to){
     return -1.0;
 }
 
+int compareEdges(const void* a, const void* b){
+    Edge* edge1 = (Edge*)a;
+    Edge* edge2 = (Edge*)b;
+    if(edge1->weight == 0 || edge2->weight == 0){
+        if(edge1->weight != 0 ){
+            return -1;
+        } else if (edge2->weight != 0){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    if(edge1->from > edge2->from){
+        return 1;
+    } else if(edge1->from < edge2->from){
+        return -1;
+    } else {
+        if(edge1->to > edge2->to){
+            return 1;
+        } else if (edge1->to < edge2->to){
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+}
+
 void printGraph(Graph* g){
     for(int i = 0; i < g->size; i++){
         for(int j = 0; j < g->size; j++){
@@ -70,4 +120,10 @@ void printGraph(Graph* g){
             }
         }
     }
+}
+
+void destroyGraph(Graph* g){
+    free(g->edges);
+    free(g->verticeLastEdgeExclusive);
+    free(g);
 }
