@@ -5,7 +5,7 @@
 #ifndef LOUVAIN_GRAPH_UTILS_H
 #define LOUVAIN_GRAPH_UTILS_H
 
-#include "mmio.h"
+#include "dataio.h"
 
 #define EDGES_IDX(graph, vertice) ((vertice) >=0 ? (graph)->verticeLastEdgeExclusive[(vertice)] : 0)
 
@@ -36,6 +36,6 @@ void printEdges(Graph* g);
 
 float hasEdge(Graph *g, int from, int to);
 
-void addEdge(Graph* g, int index, int from, int to, float value);
+void addEdge(Graph* g, int index, int from, int to, float weight);
 
 #endif //LOUVAIN_GRAPH_UTILS_H
