@@ -175,3 +175,27 @@ void updateCliques(int size, int* oldCliques, int* newCliques){
         }
     }
 }
+
+int compareMoves(const void* a, const void* b){
+    Move* move1 = (Move*)a;
+    Move* move2 = (Move*)b;
+
+    if(move1->gain > move2->gain){
+        return -1;
+    } else if( move2->gain > move1->gain){
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+void applyMoves(int* cliques, Move* moves, int numberToApply){
+    for(int i = 0; i < numberToApply; i++){
+        Move m = moves[i];
+        cliques[m.vertice] = m.targetClique;
+    }
+}
+
+void sortMoves(Move* moves, int numberOfMoves){
+    qsort(moves, numberOfMoves, sizeof(Move), compareMoves);
+}

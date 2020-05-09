@@ -5,6 +5,18 @@
 #ifndef LOUVAIN_LOUVAIN_H
 #define LOUVAIN_LOUVAIN_H
 
+typedef struct {
+    int vertice;
+    int targetClique;
+    float gain;
+} Move;
+
+int compareMoves(const void* a, const void* b);
+
+void applyMoves(int* cliques, Move* moves, int numberToApply);
+
+void sortMoves(Move* moves, int numberOfMoves);
+
 float getKi(Graph* g, int vertice);
 
 float getKiin(Graph *g, int vertice, int* cliques, int clique);
