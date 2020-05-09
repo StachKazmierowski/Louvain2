@@ -3,3 +3,8 @@
 //
 
 #include "algorithm.h"
+
+
+void phaseOne(Graph* g, int* cliques, float minimalGain);
+
+void phaseTwo(Graph* g, int* cliques);

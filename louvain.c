@@ -3,6 +3,7 @@
 //
 #include "dataio.h"
 #include "graph_utils.h"
+#include "louvain.h"
 
 float getKi(Graph* g, int vertice){
     float sum = 0.0;
@@ -78,14 +79,6 @@ float weightsSum(Graph* g){
     return sum / 2;
 }
 
-float deltaQ(Graph* g, int* cliques, int clique, int vertice){
-    float kiin = getKiin(g, vertice, cliques, clique);
-    float ki = getKi(g, vertice);
-    float sigmaT = sigmaTOT(g, cliques, clique);
-    float m = weightsSum(g);
-    printf("%f %f %f %f \n", kiin, ki, sigmaT, m);
-    return ( kiin - ((ki * sigmaT) / (2 * m))) / m ;
-}
 
 int bestClique(Graph* g, int* cliques, int vertice, float* sigmaTOTs, float m){
     float bestDelta = 0.0;
@@ -95,7 +88,7 @@ int bestClique(Graph* g, int* cliques, int vertice, float* sigmaTOTs, float m){
         int to = edge.to;
         int consideredClique = cliques[to];
         if(consideredClique != cliques[vertice] && consideredClique != bestClique){
-            float delta = deltaQ(g, cliques, consideredClique, vertice);
+            float delta = deltaQ(g, cliques, consideredClique, vertice, sigmaTOTs[vertice], m);
             if(delta > bestDelta){
                 bestClique = consideredClique;
                 bestDelta = delta;
@@ -128,6 +121,13 @@ float edgeWeight(Graph* g, int verticeFrom, int verticeTo){
     return 0.0;
 }
 
+float deltaQ(Graph* g, int* cliques, int clique, int vertice, float sigmaTOT, float m){
+    float kiin = getKiin(g, vertice, cliques, clique);
+    float ki = getKi(g, vertice);
+    printf("%f %f %f %f \n", kiin, ki, sigmaTOT, m);
+    return ( kiin - ((ki * sigmaTOT) / (2 * m))) / m ;
+}
+
 float Q(Graph* g, int* cliques, float m){
     float sum = 0.0;
     for(int i = 0 ; i < g->size; i++){
@@ -154,3 +154,24 @@ void changeEdges(Graph* g, const int* cliques, const int* minVerticeInClique){
     }
 }
 
+void fillCliqueSizes(Graph* g, int* cliques, int* cliqueSizes){
+    for(int i = 0; i < g->size; i++){
+        cliqueSizes[cliques[i]]++;
+    }
+}
+
+void moveClique(int size, int* cliques, int currClique, int targetClique){
+    for(int i = 0; i < size; i++){
+        if(cliques[i] == currClique){
+            cliques[i] = targetClique;
+        }
+    }
+}
+
+void updateCliques(int size, int* oldCliques, int* newCliques){
+    for(int i = 0; i < size; i++){
+        if(oldCliques[i] != newCliques[i]){
+            moveClique(size, newCliques, oldCliques[i], newCliques[i]);
+        }
+    }
+}

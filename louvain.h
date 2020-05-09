@@ -11,15 +11,15 @@ float getKiin(Graph *g, int vertice, int* cliques, int clique);
 
 float sigmaIN(Graph* g, int* cliques, int clique);
 
-float sigmaTOT(Graph* g, int* cliques, int clique, int vertice);
+float sigmaTOT(Graph* g, int* cliques, int clique);
 
-float weightsSum(Grap* g);
+float weightsSum(Graph* g);
 
 int sameClique(int* cliques, int vertice1, int vertice2);
 
-float Q(Graph* g, int* cliques);
+float Q(Graph* g, int* cliques, float m);
 
-float deltaQ(Graph* g, int* cliques, int clique, int vertice);
+float deltaQ(Graph* g, int* cliques, int clique, int vertice, float sigmaTOT, float m);
 
 void printCliques(Graph* g, int* cliques);
 
@@ -30,5 +30,11 @@ int canMove(int currentClique, int targetClique, int* cliqueSizes);
 float edgeWeight(Graph* g, int verticeFrom, int verticeTo);
 
 void changeEdges(Graph* g, const int* cliques, const int* minVerticeInClique);
+
+int* cliqueSizes(Graph* g, int* cliques);
+
+void moveClique(int size, int* cliques, int currClique, int targetClique);
+
+void updateCliques(int size, int* oldCliques, int* newCliques);
 
 #endif //LOUVAIN_LOUVAIN_H
