@@ -5,8 +5,6 @@
 #ifndef LOUVAIN_GRAPH_UTILS_H
 #define LOUVAIN_GRAPH_UTILS_H
 
-#include "dataio.h"
-
 #define EDGES_IDX(graph, vertice) ((vertice) >=0 ? (graph)->verticeLastEdgeExclusive[(vertice)] : 0)
 
 typedef struct{
