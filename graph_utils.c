@@ -127,3 +127,7 @@ void destroyGraph(Graph* g){
     free(g->verticeLastEdgeExclusive);
     free(g);
 }
+
+int currNumberOfVertices(){
+
+}

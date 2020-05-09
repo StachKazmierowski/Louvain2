@@ -115,8 +115,7 @@ float edgeWeight(Graph* g, int verticeFrom, int verticeTo){
 float deltaQ(Graph* g, int* cliques, int targetClique, int vertice, float* sigmaTOTs, float m){
     float kiin = getKiin(g, vertice, cliques, targetClique);
     float ki = getKi(g, vertice);
-
-    printf("%f %f %f %f \n", kiin, ki, sigmaTOTs[targetClique], m);
+//    printf("%f %f %f %f \n", kiin, ki, sigmaTOTs[targetClique], m);
     return ( kiin - ((ki * sigmaTOTs[targetClique]) / (2.0 * m))) / m ;
 }
 
@@ -164,6 +163,17 @@ void fillCliqueSizes(Graph* g, int* cliques, int* cliqueSizes){
     }
 }
 
+int canMove(int from, int to, int* cliqueSizes){
+    printf("from %d to %d size from %d size to %d\n", from, to, cliqueSizes[from], cliqueSizes[to]);
+    if(from == to){
+        return 0;
+    }
+    if(from > to || cliqueSizes[from] > 1 || cliqueSizes[to] > 1){
+        return 1;
+    }
+    return 0;
+}
+
 void moveClique(int size, int* cliques, int currClique, int targetClique){
     for(int i = 0; i < size; i++){
         if(cliques[i] == currClique){
@@ -197,6 +207,7 @@ void applyMoves(int* cliques, Move* moves, int numberToApply){
     for(int i = 0; i < numberToApply; i++){
         Move m = moves[i];
         cliques[m.vertice] = m.targetClique;
+        printf("vertice %d to clique %d\n", m.vertice, m.targetClique);
     }
 }
 
@@ -205,16 +216,16 @@ void sortMoves(Move* moves, int numberOfMoves){
 }
 
 void updateEdges(Graph* g, const int* cliques, const int* mins){
-//    for(int i = 0; i < g->numEdges; i++){
-//        Edge* edge = g->edges + i;
-//        int vertice = edge->from;
-//        int clique = cliques[vertice];
-//        int targetVertice = mins[clique];
-//        if(vertice != targetVertice){
-//            edge->from = targetVertice;
-//        }
-//        edge->to
-//    }
+    for(int i = 0; i < g->numEdges; i++){
+        Edge* edge = g->edges + i;
+        int vertice = edge->from;
+        int clique = cliques[vertice];
+        int targetVertice = mins[clique];
+        if(vertice != targetVertice){
+            edge->from = targetVertice;
+        }
+        edge->to = mins[cliques[edge->to]];
+    }
 }
 
 int* minimalVerticesInCliques(Graph* g, int* cliques){

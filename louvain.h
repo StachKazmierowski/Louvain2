@@ -51,6 +51,8 @@ void updateCliques(int size, int* oldCliques, int* newCliques);
 
 
 
+
+
 void updateEdges(Graph* g, const int* cliques, const int* mins);
 
 int* minimalVerticesInCliques(Graph* g, int* cliques);
