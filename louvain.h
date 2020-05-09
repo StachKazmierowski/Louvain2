@@ -21,6 +21,14 @@ float Q(Graph* g, int* cliques);
 
 float deltaQ(Graph* g, int* cliques, int clique, int vertice);
 
+void printCliques(Graph* g, int* cliques);
 
+int bestClique(Graph* g, int* cliques, int vertice, float* sigmaTOTs, float m);
+
+int canMove(int currentClique, int targetClique, int* cliqueSizes);
+
+float edgeWeight(Graph* g, int verticeFrom, int verticeTo);
+
+void changeEdges(Graph* g, const int* cliques, const int* minVerticeInClique);
 
 #endif //LOUVAIN_LOUVAIN_H
