@@ -18,7 +18,7 @@ float getKiin(Graph *g, int vertice, int* cliques, int clique){
     float sum = 0.0;
     for(int i = EDGES_IDX(g,vertice-1); i < EDGES_IDX(g,vertice); i++){
         Edge e = g->edges[i];
-        if(cliques[e.to] == clique){
+        if(e.to != vertice && cliques[e.to] == clique){
             sum += e.weight;
         }
     }
@@ -49,18 +49,11 @@ float sigmaTOT(Graph* g, int* cliques, int clique){
 
 void recalcSigmaTOTS(Graph*g, float* sigmaTot, int* cliques){
     for(int i = 0; i < g->size; i++){
-        sigmaTot[i] = 0.0;
+        sigmaTot[i] = 0;
     }
-    for(int i =0 ; i < g->numEdges; i++){
-        Edge e = g->edges[i];
-        int cliqueFrom = cliques[e.from];
-        int cliqueTo = cliques[e.to];
-        if(cliqueFrom == cliqueTo){
-            sigmaTot[cliqueFrom] += e.weight / 2;
-        } else {
-            sigmaTot[cliqueFrom] += e.weight / 2;
-            sigmaTot[cliqueTo] += e.weight / 2;
-        }
+    for(int i = 0; i < g->size; i++){
+        float ki = getKi(g, i);
+        sigmaTot[cliques[i]] += ki;
     }
 }
 
@@ -88,7 +81,7 @@ int bestClique(Graph* g, int* cliques, int vertice, float* sigmaTOTs, float m){
         int to = edge.to;
         int consideredClique = cliques[to];
         if(consideredClique != cliques[vertice] && consideredClique != bestClique){
-            float delta = deltaQ(g, cliques, consideredClique, vertice, sigmaTOTs[vertice], m);
+            float delta = deltaQ(g, cliques, consideredClique, vertice, sigmaTOTs, m);
             if(delta > bestDelta){
                 bestClique = consideredClique;
                 bestDelta = delta;
@@ -100,9 +93,7 @@ int bestClique(Graph* g, int* cliques, int vertice, float* sigmaTOTs, float m){
     return bestClique;
 }
 
-//int canMove(int currentClique, int targetClique, int* cliqueSizes){
-//    if(cu)
-//}
+
 
 int sameClique(int* cliques, int vertice1, int vertice2){
     if(cliques[vertice1] == cliques[vertice2]){
@@ -121,11 +112,24 @@ float edgeWeight(Graph* g, int verticeFrom, int verticeTo){
     return 0.0;
 }
 
-float deltaQ(Graph* g, int* cliques, int clique, int vertice, float sigmaTOT, float m){
-    float kiin = getKiin(g, vertice, cliques, clique);
+float deltaQ(Graph* g, int* cliques, int targetClique, int vertice, float* sigmaTOTs, float m){
+    float kiin = getKiin(g, vertice, cliques, targetClique);
     float ki = getKi(g, vertice);
-    printf("%f %f %f %f \n", kiin, ki, sigmaTOT, m);
-    return ( kiin - ((ki * sigmaTOT) / (2 * m))) / m ;
+
+    printf("%f %f %f %f \n", kiin, ki, sigmaTOTs[targetClique], m);
+    return ( kiin - ((ki * sigmaTOTs[targetClique]) / (2.0 * m))) / m ;
+}
+
+float altDeltaQ(Graph* g, int* cliques, int targetClique, int vertice, float* sigmaTOTs, float m){
+    float ki = getKi(g, vertice);
+    float kiin = getKiin(g, vertice, cliques, targetClique);
+    float EiwCiBezi = getKiin(g, vertice, cliques, cliques[vertice]);
+    float aciBezi= sigmaTOTs[cliques[vertice]] - ki;
+    float acj = sigmaTOTs[targetClique];
+    float part1 = (kiin - EiwCiBezi)/m;
+    float part2 = ki * (aciBezi - acj)/(2 * m * m);
+    return  part1+part2;
+
 }
 
 float Q(Graph* g, int* cliques, float m){
@@ -135,7 +139,7 @@ float Q(Graph* g, int* cliques, float m){
             if(sameClique(cliques, i, j) == 1){
                 float weight = edgeWeight(g, i, j);
 //                printf("%f\n", weight);
-                sum += weight - (getKi(g, i) * getKi(g, j) / (2 * m));
+                sum += weight - (getKi(g, i) * getKi(g, i) / (2 * m));
             }
         }
     }
@@ -198,4 +202,30 @@ void applyMoves(int* cliques, Move* moves, int numberToApply){
 
 void sortMoves(Move* moves, int numberOfMoves){
     qsort(moves, numberOfMoves, sizeof(Move), compareMoves);
+}
+
+void updateEdges(Graph* g, const int* cliques, const int* mins){
+//    for(int i = 0; i < g->numEdges; i++){
+//        Edge* edge = g->edges + i;
+//        int vertice = edge->from;
+//        int clique = cliques[vertice];
+//        int targetVertice = mins[clique];
+//        if(vertice != targetVertice){
+//            edge->from = targetVertice;
+//        }
+//        edge->to
+//    }
+}
+
+int* minimalVerticesInCliques(Graph* g, int* cliques){
+    int* mins = (int*) malloc(sizeof(int) * g->size);
+    for(int i = 0; i < g->size; i++){
+        mins[i] = -1;
+    }
+    for(int i = 0; i < g->size; i++){
+        int clique = cliques[i];
+        if(mins[clique] == -1 || mins[i] > i){
+            mins[clique] = -1;
+        }
+    }
 }

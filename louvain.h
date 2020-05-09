@@ -31,7 +31,7 @@ int sameClique(int* cliques, int vertice1, int vertice2);
 
 float Q(Graph* g, int* cliques, float m);
 
-float deltaQ(Graph* g, int* cliques, int clique, int vertice, float sigmaTOT, float m);
+float deltaQ(Graph* g, int* cliques, int clique, int vertice, float* sigmaTOTs, float m);
 
 void printCliques(Graph* g, int* cliques);
 
@@ -48,5 +48,13 @@ int* cliqueSizes(Graph* g, int* cliques);
 void moveClique(int size, int* cliques, int currClique, int targetClique);
 
 void updateCliques(int size, int* oldCliques, int* newCliques);
+
+
+
+void updateEdges(Graph* g, const int* cliques, const int* mins);
+
+int* minimalVerticesInCliques(Graph* g, int* cliques);
+
+
 
 #endif //LOUVAIN_LOUVAIN_H
